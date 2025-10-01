@@ -959,8 +959,19 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
       const row = rows[position.rowIdx];
       setSelectedPosition({ ...position, mode: 'EDIT', row, originalRow: row });
     } else if (samePosition) {
-      // Avoid re-renders if the selected cell state is the same
-      scrollIntoView(getCellToScroll(gridRef.current!));
+      const { startRowIdx, endRowIdx, startColumnIdx, endColumnIdx } = selectedRange;
+      if (endRowIdx - startRowIdx === 0 && endColumnIdx - startColumnIdx === 0) {
+        // Avoid re-renders if the selected cell state is the same and there is only one selected cell.
+        scrollIntoView(getCellToScroll(gridRef.current!));
+      } else {
+        // Update range to single cell if range was more than one cell.
+        setSelectedRange({
+          startColumnIdx: position.idx,
+          startRowIdx: position.rowIdx,
+          endColumnIdx: position.idx,
+          endRowIdx: position.rowIdx
+        });
+      }
     } else {
       setShouldFocusCell(options?.shouldFocusCell === true);
       setSelectedPosition({ ...position, mode: 'SELECT' });
@@ -1276,7 +1287,13 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
           selectCell: selectCellLatest,
           rangeSelectionMode: enableRangeSelection,
           selectedCellEditor: getCellEditor(rowIdx),
-          onCellMouseDown: () => setIsMouseRangeSelectionMode(true),
+          onCellMouseDown: (args, event) => {
+            setIsMouseRangeSelectionMode(true);
+            const { rowIdx, column } = args;
+            if (event.shiftKey) {
+              setSelectedRange({ ...selectedRange, endRowIdx: rowIdx, endColumnIdx: column.idx });
+            }
+          },
           onCellMouseUp: () => {
             setIsMouseRangeSelectionMode(false);
 

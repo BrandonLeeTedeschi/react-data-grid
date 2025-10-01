@@ -72,7 +72,7 @@ function Cell<R, SR>({
     onMouseDown?.(event);
     if (!handleMouseEvent(event, onCellMouseDown) || rangeSelectionMode) {
       // select cell if the event is not prevented
-      selectCellWrapper();
+      if (!event.shiftKey) selectCellWrapper();
     }
   }
 
