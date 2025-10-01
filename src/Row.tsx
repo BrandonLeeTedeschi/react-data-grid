@@ -21,11 +21,12 @@ function Row<R, SR>({
   viewportColumns,
   selectedCellEditor,
   onCellMouseDown,
-  onCellMouseUp,
-  onCellMouseEnter,
   onCellClick,
   onCellDoubleClick,
   onCellContextMenu,
+  selectionMouseDown,
+  selectionMouseUp,
+  selectionMouseEnter,
   rowClass,
   onRowChange,
   selectCell,
@@ -80,11 +81,11 @@ function Row<R, SR>({
           onCellDoubleClick,
           onCellContextMenu,
           onRowChange: handleRowChange,
-          onMouseDownCapture: onCellMouseDown,
-          onMouseUpCapture: onCellMouseUp,
-          onMouseEnter: onCellMouseEnter,
           selectCell,
-          rangeSelectionMode
+          rangeSelectionMode,
+          selectionMouseDown,
+          selectionMouseUp,
+          selectionMouseEnter
         })
       );
     }

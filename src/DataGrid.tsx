@@ -1285,16 +1285,18 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
           lastFrozenColumnIndex,
           onRowChange: handleFormatterRowChangeLatest,
           selectCell: selectCellLatest,
-          rangeSelectionMode: enableRangeSelection,
           selectedCellEditor: getCellEditor(rowIdx),
-          onCellMouseDown: (args, event) => {
+          rangeSelectionMode: enableRangeSelection,
+          selectionMouseDown: (args, event) => {
             setIsMouseRangeSelectionMode(true);
-            const { rowIdx, column } = args;
+            const { rowIdx, column, selectCell } = args;
             if (event.shiftKey) {
               setSelectedRange({ ...selectedRange, endRowIdx: rowIdx, endColumnIdx: column.idx });
+            } else {
+              selectCell();
             }
           },
-          onCellMouseUp: () => {
+          selectionMouseUp: () => {
             setIsMouseRangeSelectionMode(false);
 
             // Once the ranges are decided, re-evaluate start and end;
@@ -1305,7 +1307,7 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
               endRowIdx: Math.max(boundValue.startRowIdx, boundValue.endRowIdx)
             }));
           },
-          onCellMouseEnter: ({ rowIdx, column }) => {
+          selectionMouseEnter: ({ rowIdx, column }) => {
             if (isMouseRangeSelectionMode && enableRangeSelection) {
               setSelectedRange({ ...selectedRange, endRowIdx: rowIdx, endColumnIdx: column.idx });
             }

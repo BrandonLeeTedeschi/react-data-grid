@@ -22,8 +22,7 @@ function Cell<R, SR>({
   rowIdx,
   className,
   onMouseDown,
-  onMouseDownCapture,
-  onMouseUpCapture,
+  onMouseUp,
   onMouseEnter,
   onCellMouseDown,
   onClick,
@@ -36,6 +35,9 @@ function Cell<R, SR>({
   selectCell,
   style,
   rangeSelectionMode,
+  selectionMouseDown,
+  selectionMouseUp,
+  selectionMouseEnter,
   ...props
 }: CellRendererProps<R, SR>) {
   const { tabIndex, childTabIndex, onFocus } = useRovingTabIndex(isCellSelected);
@@ -70,10 +72,21 @@ function Cell<R, SR>({
 
   function handleMouseDown(event: MouseEvent<HTMLDivElement>) {
     onMouseDown?.(event);
-    if (!handleMouseEvent(event, onCellMouseDown) || rangeSelectionMode) {
+    if (rangeSelectionMode) handleMouseEvent(event, selectionMouseDown);
+    if (!handleMouseEvent(event, onCellMouseDown) && !rangeSelectionMode) {
       // select cell if the event is not prevented
-      if (!event.shiftKey) selectCellWrapper();
+      selectCellWrapper();
     }
+  }
+
+  function handleMouseUp(event: MouseEvent<HTMLDivElement>) {
+    onMouseUp?.(event);
+    handleMouseEvent(event, selectionMouseUp);
+  }
+
+  function handleMouseEnter(event: MouseEvent<HTMLDivElement>) {
+    onMouseEnter?.(event);
+    handleMouseEvent(event, selectionMouseEnter);
   }
 
   function handleClick(event: MouseEvent<HTMLDivElement>) {
@@ -102,6 +115,7 @@ function Cell<R, SR>({
     function onMouseEvent(event: React.MouseEvent<HTMLDivElement>) {
       if (handler) {
         const cellEvent = createCellEvent(event);
+        cellEvent.preventGridDefault();
         handler({ row, column, selectCell: selectCellWrapper, rowIdx }, cellEvent);
       }
     }
@@ -124,9 +138,8 @@ function Cell<R, SR>({
       }}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
-      onMouseDownCapture={getOnMouseEvent(onMouseDownCapture)}
-      onMouseUpCapture={getOnMouseEvent(onMouseUpCapture)}
-      onMouseEnter={getOnMouseEvent(onMouseEnter)}
+      onMouseUp={handleMouseUp}
+      onMouseEnter={handleMouseEnter}
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       onFocus={onFocus}

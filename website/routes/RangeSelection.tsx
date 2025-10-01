@@ -456,7 +456,6 @@ export default function RangeSelection({ direction }: Props) {
 
   function handleCellPaste({ row, column }: CellPasteArgs<Row>, event: CellClipboardEvent): Row {
     const targetKey = column.key;
-    console.log('Pasting value: ', event.clipboardData.getData('text/plain'));
 
     if (copiedCell !== null) {
       return { ...row, [targetKey]: copiedCell.value };
