@@ -665,8 +665,8 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
     if (event.shiftKey) {
       switch (event.key) {
         case 'ArrowUp':
-          if (selectedRange.endRowIdx > 0) {
-            setSelectedRange({ ...selectedRange, endRowIdx: selectedRange.endRowIdx - 1 });
+          if (selectedRange.startRowIdx > 0) {
+            setSelectedRange({ ...selectedRange, startRowIdx: selectedRange.startRowIdx - 1 });
           }
           break;
         case 'ArrowDown':
@@ -680,8 +680,11 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
           }
           break;
         case 'ArrowLeft':
-          if (selectedRange.endColumnIdx > 0) {
-            setSelectedRange({ ...selectedRange, endColumnIdx: selectedRange.endColumnIdx - 1 });
+          if (selectedRange.startColumnIdx > 0) {
+            setSelectedRange({
+              ...selectedRange,
+              startColumnIdx: selectedRange.startColumnIdx - 1
+            });
           }
           break;
         default:
@@ -1145,8 +1148,11 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
     if (
       selectedRange.endRowIdx - selectedRange.startRowIdx > 0 ||
       selectedRange.endColumnIdx - selectedRange.startColumnIdx > 0
-    )
+    ) {
+      setShouldFocusCell(true);
+      setSelectedPosition(({ idx, rowIdx }) => ({ idx, rowIdx, mode: 'SELECT' }));
       return;
+    }
 
     const { idx, row } = selectedPosition;
     const column = columns[idx];
@@ -1154,11 +1160,12 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
     const closeOnExternalRowChange = column.editorOptions?.closeOnExternalRowChange ?? true;
 
     const closeEditor = (shouldFocusCell: boolean) => {
-      setShouldFocusCell(shouldFocusCell);
+      setShouldFocusCell(true);
       setSelectedPosition(({ idx, rowIdx }) => ({ idx, rowIdx, mode: 'SELECT' }));
     };
 
     const onRowChange = (row: R, commitChanges: boolean, shouldFocusCell: boolean) => {
+      setShouldFocusCell(true);
       if (commitChanges) {
         // Prevents two issues when editor is closed by clicking on a different cell
         //
