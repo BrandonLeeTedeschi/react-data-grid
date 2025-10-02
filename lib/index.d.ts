@@ -1,6 +1,6 @@
 import * as react0 from "react";
 import { Key, ReactElement, ReactNode } from "react";
-import * as react_jsx_runtime0 from "react/jsx-runtime";
+import * as react_jsx_runtime1 from "react/jsx-runtime";
 
 //#region src/types.d.ts
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -153,6 +153,9 @@ interface CellRendererProps<TRow, TSummaryRow> extends BaseCellRendererProps<TRo
   isCellSelected: boolean;
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, newRow: TRow) => void;
   rangeSelectionMode: boolean;
+  selectionMouseDown: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseUp: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseEnter: CellMouseEventHandler<TRow, TSummaryRow>;
 }
 type CellEvent<E extends React.SyntheticEvent<HTMLDivElement>> = E & {
   preventGridDefault: () => void;
@@ -208,6 +211,9 @@ interface RenderRowProps<TRow, TSummaryRow = unknown> extends BaseRenderRowProps
   draggedOverCellIdx: number | undefined;
   selectedCellEditor: ReactElement<RenderEditCellProps<TRow>> | undefined;
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, rowIdx: number, newRow: TRow) => void;
+  selectionMouseDown: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseUp: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseEnter: CellMouseEventHandler<TRow, TSummaryRow>;
   rowClass: Maybe<(row: TRow, rowIdx: number) => Maybe<string>>;
 }
 interface RowsChangeData<R, SR = unknown> {
@@ -450,7 +456,7 @@ interface DataGridProps<R, SR = unknown, K extends Key = Key> extends SharedDivP
  *
  * <DataGrid columns={columns} rows={rows} />
  */
-declare function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridProps<R, SR, K>): react_jsx_runtime0.JSX.Element;
+declare function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridProps<R, SR, K>): react_jsx_runtime1.JSX.Element;
 //#endregion
 //#region src/TreeDataGrid.d.ts
 interface TreeDataGridProps<R, SR = unknown, K extends Key = Key> extends Omit<DataGridProps<R, SR, K>, 'columns' | 'role' | 'aria-rowcount' | 'rowHeight' | 'onFill' | 'isRowSelectionDisabled'> {
@@ -480,7 +486,7 @@ declare function TreeDataGrid<R, SR = unknown, K extends Key = Key>({
   onExpandedGroupIdsChange,
   groupIdGetter: rawGroupIdGetter,
   ...props
-}: TreeDataGridProps<R, SR, K>): react_jsx_runtime0.JSX.Element;
+}: TreeDataGridProps<R, SR, K>): react_jsx_runtime1.JSX.Element;
 //#endregion
 //#region src/DataGridDefaultRenderersContext.d.ts
 declare const DataGridDefaultRenderersContext: react0.Context<Maybe<Renderers<any, any>>>;
@@ -500,16 +506,16 @@ declare function renderCheckbox({
   onChange,
   indeterminate,
   ...props
-}: RenderCheckboxProps): react_jsx_runtime0.JSX.Element;
+}: RenderCheckboxProps): react_jsx_runtime1.JSX.Element;
 //#endregion
 //#region src/cellRenderers/renderToggleGroup.d.ts
-declare function renderToggleGroup<R, SR>(props: RenderGroupCellProps<R, SR>): react_jsx_runtime0.JSX.Element;
+declare function renderToggleGroup<R, SR>(props: RenderGroupCellProps<R, SR>): react_jsx_runtime1.JSX.Element;
 declare function ToggleGroup<R, SR>({
   groupKey,
   isExpanded,
   tabIndex,
   toggleGroup
-}: RenderGroupCellProps<R, SR>): react_jsx_runtime0.JSX.Element;
+}: RenderGroupCellProps<R, SR>): react_jsx_runtime1.JSX.Element;
 //#endregion
 //#region src/cellRenderers/renderValue.d.ts
 declare function renderValue<R, SR>(props: RenderCellProps<R, SR>): react0.ReactNode;
@@ -535,19 +541,19 @@ declare function textEditor<TRow, TSummaryRow>({
   column,
   onRowChange,
   onClose
-}: RenderEditCellProps<TRow, TSummaryRow>): react_jsx_runtime0.JSX.Element;
+}: RenderEditCellProps<TRow, TSummaryRow>): react_jsx_runtime1.JSX.Element;
 //#endregion
 //#region src/renderHeaderCell.d.ts
 declare function renderHeaderCell<R, SR>({
   column,
   sortDirection,
   priority
-}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime0.JSX.Element;
+}: RenderHeaderCellProps<R, SR>): string | react_jsx_runtime1.JSX.Element;
 //#endregion
 //#region src/sortStatus.d.ts
 declare function renderSortIcon({
   sortDirection
-}: RenderSortIconProps): react_jsx_runtime0.JSX.Element | null;
+}: RenderSortIconProps): react_jsx_runtime1.JSX.Element | null;
 declare function renderSortPriority({
   priority
 }: RenderSortPriorityProps): number | undefined;

@@ -111,18 +111,6 @@ function Cell<R, SR>({
     onRowChange(column, newRow);
   }
 
-  function getOnMouseEvent(handler) {
-    function onMouseEvent(event: React.MouseEvent<HTMLDivElement>) {
-      if (handler) {
-        const cellEvent = createCellEvent(event);
-        cellEvent.preventGridDefault();
-        handler({ row, column, selectCell: selectCellWrapper, rowIdx }, cellEvent);
-      }
-    }
-
-    return onMouseEvent;
-  }
-
   return (
     <div
       role="gridcell"

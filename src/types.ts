@@ -179,6 +179,9 @@ export interface CellRendererProps<TRow, TSummaryRow>
   isCellSelected: boolean;
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, newRow: TRow) => void;
   rangeSelectionMode: boolean;
+  selectionMouseDown: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseUp: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseEnter: CellMouseEventHandler<TRow, TSummaryRow>;
 }
 
 export type CellEvent<E extends React.SyntheticEvent<HTMLDivElement>> = E & {
@@ -249,6 +252,9 @@ export interface RenderRowProps<TRow, TSummaryRow = unknown>
   draggedOverCellIdx: number | undefined;
   selectedCellEditor: ReactElement<RenderEditCellProps<TRow>> | undefined;
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, rowIdx: number, newRow: TRow) => void;
+  selectionMouseDown: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseUp: CellMouseEventHandler<TRow, TSummaryRow>;
+  selectionMouseEnter: CellMouseEventHandler<TRow, TSummaryRow>;
   rowClass: Maybe<(row: TRow, rowIdx: number) => Maybe<string>>;
 }
 
