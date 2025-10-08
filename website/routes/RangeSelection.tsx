@@ -368,8 +368,8 @@ export default function RangeSelection({ direction }: Props) {
 
     const parsed = parseClipboardText(text);
 
-    const targetStartRow = Math.min(targetRange.startRowIdx, targetRange.endRowIdx);
-    const targetStartCol = Math.min(targetRange.startColumnIdx, targetRange.endColumnIdx);
+    const targetStartRow = targetRange.startRowIdx;
+    const targetStartCol = targetRange.startColumnIdx;
 
     const newRows = [...rows];
 

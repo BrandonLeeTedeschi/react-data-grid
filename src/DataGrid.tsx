@@ -36,6 +36,7 @@ import {
   isSelectedCellEditable,
   isValueInBetween,
   renderMeasuringCells,
+  getTopLeftBoundSelectedRange,
   scrollIntoView,
   sign
 } from './utils';
@@ -738,14 +739,15 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
   function handleCellCopy(event: CellClipboardEvent) {
     if (!selectedCellIsWithinViewportBounds) return;
     if (enableRangeSelection) {
-      setCopiedRange(selectedRange);
-      const sourceRows = rows.slice(selectedRange.startRowIdx, selectedRange.endRowIdx + 1);
+      const cellsRange = getTopLeftBoundSelectedRange(selectedRange);
+      setCopiedRange(cellsRange);
+      const sourceRows = rows.slice(cellsRange.startRowIdx, cellsRange.endRowIdx + 1);
       const sourceColumnKeys = columns
-        .slice(selectedRange.startColumnIdx, selectedRange.endColumnIdx + 1)
+        .slice(cellsRange.startColumnIdx, cellsRange.endColumnIdx + 1)
         .map((c) => c.key);
       onMultiCopy?.(
         {
-          cellsRange: selectedRange,
+          cellsRange,
           sourceRows,
           sourceColumnKeys
         },
@@ -790,10 +792,11 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
         return;
       }
 
+      const targetRange = getTopLeftBoundSelectedRange(selectedRange);
       const updatedRows = onMultiPaste(
         {
           copiedRange,
-          targetRange: selectedRange
+          targetRange
         },
         event
       );
@@ -1305,14 +1308,6 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
           },
           selectionMouseUp: () => {
             setIsMouseRangeSelectionMode(false);
-
-            // Once the ranges are decided, re-evaluate start and end;
-            setSelectedRange((boundValue) => ({
-              startColumnIdx: Math.min(boundValue.startColumnIdx, boundValue.endColumnIdx),
-              endColumnIdx: Math.max(boundValue.startColumnIdx, boundValue.endColumnIdx),
-              startRowIdx: Math.min(boundValue.startRowIdx, boundValue.endRowIdx),
-              endRowIdx: Math.max(boundValue.startRowIdx, boundValue.endRowIdx)
-            }));
           },
           selectionMouseEnter: ({ rowIdx, column }) => {
             if (isMouseRangeSelectionMode && enableRangeSelection) {
