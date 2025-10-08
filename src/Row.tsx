@@ -76,6 +76,7 @@ function Row<R, SR>({
           rowIdx,
           isDraggedOver: draggedOverCellIdx === idx,
           isCellSelected,
+          selectedCellIdx,
           onCellMouseDown,
           onCellClick,
           onCellDoubleClick,

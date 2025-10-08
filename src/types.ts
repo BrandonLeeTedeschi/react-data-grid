@@ -177,6 +177,7 @@ export interface CellRendererProps<TRow, TSummaryRow>
   colSpan: number | undefined;
   isDraggedOver: boolean;
   isCellSelected: boolean;
+  selectedCellIdx: number | undefined;
   onRowChange: (column: CalculatedColumn<TRow, TSummaryRow>, newRow: TRow) => void;
   rangeSelectionMode: boolean;
   selectionMouseDown: CellMouseEventHandler<TRow, TSummaryRow>;

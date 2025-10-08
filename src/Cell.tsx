@@ -18,6 +18,7 @@ function Cell<R, SR>({
   colSpan,
   isCellSelected,
   isDraggedOver,
+  selectedCellIdx,
   row,
   rowIdx,
   className,
@@ -42,11 +43,17 @@ function Cell<R, SR>({
 }: CellRendererProps<R, SR>) {
   const { tabIndex, childTabIndex, onFocus } = useRovingTabIndex(isCellSelected);
 
+  const rootSelectedCellClassname = css`
+    @layer rdg.Cell {
+      background-color: hsl(207, 75%, 90%) !important;
+    }
+  `;
   const { cellClass } = column;
   className = getCellClassname(
     column,
     {
-      [cellDraggedOverClassname]: isDraggedOver
+      [cellDraggedOverClassname]: isDraggedOver,
+      [rootSelectedCellClassname]: selectedCellIdx === column.idx
     },
     typeof cellClass === 'function' ? cellClass(row) : cellClass,
     className

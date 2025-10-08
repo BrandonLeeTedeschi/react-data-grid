@@ -31,12 +31,12 @@ import {
   getColSpan,
   getLeftRightKey,
   getNextSelectedCellPosition,
+  getTopLeftBoundSelectedRange,
   isCtrlKeyHeldDown,
   isDefaultCellInput,
   isSelectedCellEditable,
   isValueInBetween,
   renderMeasuringCells,
-  getTopLeftBoundSelectedRange,
   scrollIntoView,
   sign
 } from './utils';
