@@ -1,4 +1,4 @@
-import type { CalculatedColumn, CalculatedColumnOrColumnGroup, Maybe } from '../types';
+import type { CalculatedColumn, CalculatedColumnOrColumnGroup, CellsRange, Maybe } from '../types';
 
 export * from './colSpanUtils';
 export * from './domUtils';
@@ -39,9 +39,18 @@ export function getHeaderCellRowSpan<R, SR>(
   return column.parent === undefined ? rowIdx : column.level - column.parent.level;
 }
 
-export const isValueInBetween = (value: number, num1: number, num2: number) => {
+export function isValueInBetween(value: number, num1: number, num2: number) {
   if (num1 >= num2) {
     return value <= num1 && value >= num2;
   }
   return value >= num1 && value <= num2;
-};
+}
+
+export function getTopLeftBoundSelectedRange(selectedRange: CellsRange) {
+  return {
+    startColumnIdx: Math.min(selectedRange.startColumnIdx, selectedRange.endColumnIdx),
+    endColumnIdx: Math.max(selectedRange.startColumnIdx, selectedRange.endColumnIdx),
+    startRowIdx: Math.min(selectedRange.startRowIdx, selectedRange.endRowIdx),
+    endRowIdx: Math.max(selectedRange.startRowIdx, selectedRange.endRowIdx)
+  };
+}

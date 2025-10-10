@@ -31,6 +31,7 @@ import {
   getColSpan,
   getLeftRightKey,
   getNextSelectedCellPosition,
+  getTopLeftBoundSelectedRange,
   isCtrlKeyHeldDown,
   isDefaultCellInput,
   isSelectedCellEditable,
@@ -738,14 +739,15 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
   function handleCellCopy(event: CellClipboardEvent) {
     if (!selectedCellIsWithinViewportBounds) return;
     if (enableRangeSelection) {
-      setCopiedRange(selectedRange);
-      const sourceRows = rows.slice(selectedRange.startRowIdx, selectedRange.endRowIdx + 1);
+      const cellsRange = getTopLeftBoundSelectedRange(selectedRange);
+      setCopiedRange(cellsRange);
+      const sourceRows = rows.slice(cellsRange.startRowIdx, cellsRange.endRowIdx + 1);
       const sourceColumnKeys = columns
-        .slice(selectedRange.startColumnIdx, selectedRange.endColumnIdx + 1)
+        .slice(cellsRange.startColumnIdx, cellsRange.endColumnIdx + 1)
         .map((c) => c.key);
       onMultiCopy?.(
         {
-          cellsRange: selectedRange,
+          cellsRange,
           sourceRows,
           sourceColumnKeys
         },
@@ -790,10 +792,11 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
         return;
       }
 
+      const targetRange = getTopLeftBoundSelectedRange(selectedRange);
       const updatedRows = onMultiPaste(
         {
           copiedRange,
-          targetRange: selectedRange
+          targetRange
         },
         event
       );
@@ -962,8 +965,19 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
       const row = rows[position.rowIdx];
       setSelectedPosition({ ...position, mode: 'EDIT', row, originalRow: row });
     } else if (samePosition) {
-      // Avoid re-renders if the selected cell state is the same
-      scrollIntoView(getCellToScroll(gridRef.current!));
+      const { startRowIdx, endRowIdx, startColumnIdx, endColumnIdx } = selectedRange;
+      if (endRowIdx - startRowIdx === 0 && endColumnIdx - startColumnIdx === 0) {
+        // Avoid re-renders if the selected cell state is the same and there is only one selected cell.
+        scrollIntoView(getCellToScroll(gridRef.current!));
+      } else {
+        // Update range to single cell if range was more than one cell.
+        setSelectedRange({
+          startColumnIdx: position.idx,
+          startRowIdx: position.rowIdx,
+          endColumnIdx: position.idx,
+          endRowIdx: position.rowIdx
+        });
+      }
     } else {
       setShouldFocusCell(options?.shouldFocusCell === true);
       setSelectedPosition({ ...position, mode: 'SELECT' });
@@ -1281,21 +1295,21 @@ export function DataGrid<R, SR = unknown, K extends Key = Key>(props: DataGridPr
           lastFrozenColumnIndex,
           onRowChange: handleFormatterRowChangeLatest,
           selectCell: selectCellLatest,
-          rangeSelectionMode: enableRangeSelection,
           selectedCellEditor: getCellEditor(rowIdx),
-          onCellMouseDown: () => setIsMouseRangeSelectionMode(true),
-          onCellMouseUp: () => {
-            setIsMouseRangeSelectionMode(false);
-
-            // Once the ranges are decided, re-evaluate start and end;
-            setSelectedRange((boundValue) => ({
-              startColumnIdx: Math.min(boundValue.startColumnIdx, boundValue.endColumnIdx),
-              endColumnIdx: Math.max(boundValue.startColumnIdx, boundValue.endColumnIdx),
-              startRowIdx: Math.min(boundValue.startRowIdx, boundValue.endRowIdx),
-              endRowIdx: Math.max(boundValue.startRowIdx, boundValue.endRowIdx)
-            }));
+          rangeSelectionMode: enableRangeSelection,
+          selectionMouseDown: (args, event) => {
+            setIsMouseRangeSelectionMode(true);
+            const { rowIdx, column, selectCell } = args;
+            if (event.shiftKey) {
+              setSelectedRange({ ...selectedRange, endRowIdx: rowIdx, endColumnIdx: column.idx });
+            } else {
+              selectCell();
+            }
           },
-          onCellMouseEnter: ({ rowIdx, column }) => {
+          selectionMouseUp: () => {
+            setIsMouseRangeSelectionMode(false);
+          },
+          selectionMouseEnter: ({ rowIdx, column }) => {
             if (isMouseRangeSelectionMode && enableRangeSelection) {
               setSelectedRange({ ...selectedRange, endRowIdx: rowIdx, endColumnIdx: column.idx });
             }

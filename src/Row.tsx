@@ -21,11 +21,12 @@ function Row<R, SR>({
   viewportColumns,
   selectedCellEditor,
   onCellMouseDown,
-  onCellMouseUp,
-  onCellMouseEnter,
   onCellClick,
   onCellDoubleClick,
   onCellContextMenu,
+  selectionMouseDown,
+  selectionMouseUp,
+  selectionMouseEnter,
   rowClass,
   onRowChange,
   selectCell,
@@ -75,16 +76,17 @@ function Row<R, SR>({
           rowIdx,
           isDraggedOver: draggedOverCellIdx === idx,
           isCellSelected,
+          selectedCellIdx,
           onCellMouseDown,
           onCellClick,
           onCellDoubleClick,
           onCellContextMenu,
           onRowChange: handleRowChange,
-          onMouseDownCapture: onCellMouseDown,
-          onMouseUpCapture: onCellMouseUp,
-          onMouseEnter: onCellMouseEnter,
           selectCell,
-          rangeSelectionMode
+          rangeSelectionMode,
+          selectionMouseDown,
+          selectionMouseUp,
+          selectionMouseEnter
         })
       );
     }

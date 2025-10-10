@@ -158,6 +158,12 @@
   }
 }
 
+.rq910m07-0-0-beta-56 {
+    @layer rdg.Cell {
+      background-color: hsl(207, 75%, 90%) !important;
+    }
+  }
+
 
 .cis5rrm7-0-0-beta-56 {
   @layer rdg.EditCell {
